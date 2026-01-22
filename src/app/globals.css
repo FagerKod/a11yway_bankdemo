@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Screen reader only - visually hidden but accessible */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Make sr-only content visible when focused (for skip links) */
+  .sr-only-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0.5rem 1rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* Base focus styles - v3 components use these */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2;
+  }
+
+  /* Remove default focus outline for v1 (accessibility anti-pattern) */
+  .no-focus-visible {
+    outline: none !important;
+  }
+  .no-focus-visible:focus {
+    outline: none !important;
+  }
+}
+
+@layer components {
+  /* Shared button styles - visual only, applied to all versions */
+  .btn-base {
+    @apply px-5 py-2.5 rounded-lg font-medium transition-colors duration-150;
+  }
+
+  .btn-primary {
+    @apply btn-base bg-navy-700 text-white hover:bg-navy-800;
+  }
+
+  .btn-secondary {
+    @apply btn-base bg-gray-100 text-navy-700 hover:bg-gray-200 border border-gray-200;
+  }
+
+  /* Card component */
+  .card {
+    @apply bg-white rounded-xl shadow-card border border-gray-100;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-card-hover transition-shadow duration-200;
+  }
+
+  /* Input styles - visual only */
+  .input-base {
+    @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-navy-900;
+    @apply placeholder:text-gray-400;
+  }
+
+  .input-focus {
+    @apply input-base focus:border-accent-500 focus:ring-2 focus:ring-accent-500 focus:ring-offset-0 focus:outline-none;
+  }
+
+  /* Link styles */
+  .link {
+    @apply text-accent-500 hover:text-accent-600 underline underline-offset-2;
+  }
+}
+
+/* Custom scrollbar for modals and scrollable areas */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.300') transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: theme('colors.gray.300');
+    border-radius: 3px;
+  }
+
+  /* Vertical text for version switcher tab */
+  .writing-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+}
