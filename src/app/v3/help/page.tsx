@@ -16,7 +16,7 @@ import Link from 'next/link';
  */
 export default function V3HelpPage() {
   return (
-    <main id="main-content" className="bg-gray-50 min-h-screen py-12">
+    <div className="bg-gray-50 min-h-screen py-12">
       <div className="max-w-2xl mx-auto px-4">
         <article className="bg-white rounded-xl shadow-sm p-8">
           {/* GOOD: Proper heading hierarchy */}
@@ -91,6 +91,6 @@ export default function V3HelpPage() {
           <strong>Demo:</strong> Detta är en simulerad hjälpsida. I en riktig bank skulle det finnas mer detaljerad information och kontaktmöjligheter.
         </aside>
       </div>
-    </main>
+    </div>
   );
 }

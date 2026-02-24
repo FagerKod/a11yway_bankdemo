@@ -29,8 +29,9 @@
   }
 
   /* Base focus styles - v3 components use these */
+  /* Uses ring for visual style + transparent outline that becomes visible in forced-colors mode */
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2;
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500;
   }
 
   /* Remove default focus outline for v1 (accessibility anti-pattern) */
@@ -72,7 +73,7 @@
   }
 
   .input-focus {
-    @apply input-base focus:border-accent-500 focus:ring-2 focus:ring-accent-500 focus:ring-offset-0 focus:outline-none;
+    @apply input-base focus:border-accent-500 focus:outline-2 focus:outline-accent-500;
   }
 
   /* Link styles */

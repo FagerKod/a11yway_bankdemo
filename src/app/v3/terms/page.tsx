@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function V3TermsPage() {
   return (
-    <main id="main-content" className="bg-gray-50 min-h-screen py-12">
+    <div className="bg-gray-50 min-h-screen py-12">
       <div className="max-w-2xl mx-auto px-4">
         <article className="bg-white rounded-xl shadow-sm p-8">
           <h1 className="text-2xl font-bold text-navy-900 mb-6">Villkor</h1>
@@ -50,6 +50,6 @@ export default function V3TermsPage() {
           <strong>Demo:</strong> Detta är simulerade villkor.
         </aside>
       </div>
-    </main>
+    </div>
   );
 }

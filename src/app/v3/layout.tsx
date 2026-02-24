@@ -113,7 +113,7 @@ export default function V3Layout({
                 <li>
                   <Link
                     href="/v3/contact"
-                    className="text-sm text-gray-500 hover:text-navy-700 focus-ring rounded"
+                    className="text-sm text-gray-600 hover:text-navy-700 focus-ring rounded"
                   >
                     Kontakt
                   </Link>
@@ -121,7 +121,7 @@ export default function V3Layout({
                 <li>
                   <Link
                     href="/v3/terms"
-                    className="text-sm text-gray-500 hover:text-navy-700 focus-ring rounded"
+                    className="text-sm text-gray-600 hover:text-navy-700 focus-ring rounded"
                   >
                     Villkor
                   </Link>
@@ -129,7 +129,7 @@ export default function V3Layout({
                 <li>
                   <Link
                     href="/v3/accessibility"
-                    className="text-sm text-gray-500 hover:text-navy-700 focus-ring rounded"
+                    className="text-sm text-gray-600 hover:text-navy-700 focus-ring rounded"
                   >
                     Tillgänglighet
                   </Link>

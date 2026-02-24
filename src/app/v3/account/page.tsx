@@ -249,31 +249,28 @@ function V3DocumentsTab() {
       </h3>
       <ul className="space-y-2" role="list">
         {documents.map((doc) => (
-          <li key={doc.id}>
-            {/* ✅ GOOD: Document as a link with proper accessible name */}
+          <li key={doc.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            {/* ✅ GOOD: Document link and download button are separate interactive elements */}
             <a
               href={`/v3/documents/${doc.id}`}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 focus-ring"
+              className="flex items-center gap-3 flex-1 rounded focus-ring"
             >
-              <div className="flex items-center gap-3">
-                <svg className="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" />
-                </svg>
-                <div>
-                  <span className="font-medium text-navy-900">{doc.name}</span>
-                  <span className="block text-sm text-gray-500">{doc.date}</span>
-                </div>
+              <svg className="w-8 h-8 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" />
+              </svg>
+              <div>
+                <span className="font-medium text-navy-900">{doc.name}</span>
+                <span className="block text-sm text-gray-500">{doc.date}</span>
               </div>
-              <button
-                className="p-2 hover:bg-gray-200 rounded-lg focus-ring"
-                aria-label={`Ladda ner ${doc.name}`}
-                onClick={(e) => e.preventDefault()}
-              >
-                <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-              </button>
             </a>
+            <button
+              className="p-2 hover:bg-gray-200 rounded-lg focus-ring shrink-0 ml-2"
+              aria-label={`Ladda ner ${doc.name}`}
+            >
+              <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+            </button>
           </li>
         ))}
       </ul>
@@ -379,15 +376,9 @@ function V3SpendingChart() {
         {data.map((item) => (
           <div key={item.category} className="flex items-center gap-4">
             <div className="w-24 text-sm text-gray-600">{item.category}</div>
-            {/* ✅ GOOD: Progress bar with accessible value */}
-            <div
-              className="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden"
-              role="progressbar"
-              aria-valuenow={item.amount}
-              aria-valuemin={0}
-              aria-valuemax={maxAmount}
-              aria-label={`${item.category}: ${formatSEK(item.amount)}`}
-            >
+            {/* Bars are presentational — role="img" on parent makes children presentational.
+                Accessible info is provided via the parent's aria-label + the data table below. */}
+            <div className="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
               <div
                 className={`h-full ${item.color} rounded-full`}
                 style={{ width: `${(item.amount / maxAmount) * 100}%` }}

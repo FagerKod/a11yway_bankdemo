@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function V3AccessibilityPage() {
   return (
-    <main id="main-content" className="bg-gray-50 min-h-screen py-12">
+    <div className="bg-gray-50 min-h-screen py-12">
       <div className="max-w-2xl mx-auto px-4">
         <article className="bg-white rounded-xl shadow-sm p-8">
           <h1 className="text-2xl font-bold text-navy-900 mb-6">Tillgänglighet</h1>
@@ -56,6 +56,6 @@ export default function V3AccessibilityPage() {
           <strong>Demo:</strong> Detta är en simulerad tillgänglighetsredogörelse.
         </aside>
       </div>
-    </main>
+    </div>
   );
 }

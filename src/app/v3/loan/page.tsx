@@ -63,7 +63,15 @@ export default function V3LoanPage() {
   };
 
   const handleNext = () => {
-    if (validateStep(currentStep) && currentStep < steps.length - 1) {
+    if (!validateStep(currentStep)) {
+      // ✅ GOOD: Move focus to first error field on validation failure
+      requestAnimationFrame(() => {
+        const firstError = document.querySelector('[aria-invalid="true"]') as HTMLElement;
+        firstError?.focus();
+      });
+      return;
+    }
+    if (currentStep < steps.length - 1) {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
       setAnnouncement(`Steg ${nextStep + 1} av ${steps.length}: ${steps[nextStep]}`);
@@ -87,11 +95,19 @@ export default function V3LoanPage() {
     }
   };
 
+  const [submitted, setSubmitted] = useState(false);
+
   const handleSubmit = () => {
-    if (validateStep(currentStep)) {
-      setAnnouncement('Din låneansökan har skickats!');
-      alert('Ansökan skickad!');
+    if (!validateStep(currentStep)) {
+      // ✅ GOOD: Move focus to first error field on validation failure
+      requestAnimationFrame(() => {
+        const firstError = document.querySelector('[aria-invalid="true"]') as HTMLElement;
+        firstError?.focus();
+      });
+      return;
     }
+    setSubmitted(true);
+    setAnnouncement('Din låneansökan har skickats!');
   };
 
   const monthlyPayment = calculateMonthlyPayment(formData.amount, formData.duration);
@@ -113,54 +129,78 @@ export default function V3LoanPage() {
       {/* ✅ GOOD: Accessible progress indicator */}
       <V3StepIndicator steps={steps} currentStep={currentStep} />
 
+      {submitted ? (
+        <div className="card p-6 mt-6 text-center" role="status">
+          <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h2 className="text-lg font-semibold text-navy-900 mb-2">Ansökan skickad!</h2>
+          <p className="text-gray-600">Din låneansökan har tagits emot och behandlas inom 1–2 bankdagar.</p>
+        </div>
+      ) : (
       <div className="card p-6 mt-6">
-        {/* ✅ GOOD: Step containers are focusable for focus management */}
-        <div
-          ref={stepRefs[0]}
-          tabIndex={currentStep === 0 ? -1 : undefined}
+        {/* ✅ GOOD: Step containers wrapped in <form> for native submit and focusable for focus management */}
+        <form
+          onSubmit={(e) => { e.preventDefault(); handleNext(); }}
           hidden={currentStep !== 0}
+          noValidate
         >
-          {currentStep === 0 && (
-            <V3Step1
-              formData={formData}
-              setFormData={setFormData}
-              errors={errors}
-              monthlyPayment={monthlyPayment}
-            />
-          )}
-        </div>
-        <div
-          ref={stepRefs[1]}
-          tabIndex={currentStep === 1 ? -1 : undefined}
+          <div
+            ref={stepRefs[0]}
+            tabIndex={currentStep === 0 ? -1 : undefined}
+          >
+            {currentStep === 0 && (
+              <V3Step1
+                formData={formData}
+                setFormData={setFormData}
+                errors={errors}
+                monthlyPayment={monthlyPayment}
+              />
+            )}
+          </div>
+        </form>
+        <form
+          onSubmit={(e) => { e.preventDefault(); handleNext(); }}
           hidden={currentStep !== 1}
+          noValidate
         >
-          {currentStep === 1 && (
-            <V3Step2
-              formData={formData}
-              setFormData={setFormData}
-              errors={errors}
-            />
-          )}
-        </div>
-        <div
-          ref={stepRefs[2]}
-          tabIndex={currentStep === 2 ? -1 : undefined}
+          <div
+            ref={stepRefs[1]}
+            tabIndex={currentStep === 1 ? -1 : undefined}
+          >
+            {currentStep === 1 && (
+              <V3Step2
+                formData={formData}
+                setFormData={setFormData}
+                errors={errors}
+              />
+            )}
+          </div>
+        </form>
+        <form
+          onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}
           hidden={currentStep !== 2}
+          noValidate
         >
-          {currentStep === 2 && (
-            <V3Step3
-              formData={formData}
-              setFormData={setFormData}
-              errors={errors}
-              monthlyPayment={monthlyPayment}
-            />
-          )}
-        </div>
+          <div
+            ref={stepRefs[2]}
+            tabIndex={currentStep === 2 ? -1 : undefined}
+          >
+            {currentStep === 2 && (
+              <V3Step3
+                formData={formData}
+                setFormData={setFormData}
+                errors={errors}
+                monthlyPayment={monthlyPayment}
+              />
+            )}
+          </div>
+        </form>
 
         {/* ✅ GOOD: Navigation with real buttons */}
         <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
           {currentStep > 0 ? (
-            <button onClick={handleBack} className="btn-secondary focus-ring">
+            <button type="button" onClick={handleBack} className="btn-secondary focus-ring">
               ← Tillbaka
             </button>
           ) : (
@@ -168,16 +208,17 @@ export default function V3LoanPage() {
           )}
 
           {currentStep < steps.length - 1 ? (
-            <button onClick={handleNext} className="btn-primary focus-ring">
+            <button type="button" onClick={handleNext} className="btn-primary focus-ring">
               Nästa →
             </button>
           ) : (
-            <button onClick={handleSubmit} className="btn-primary focus-ring">
+            <button type="button" onClick={handleSubmit} className="btn-primary focus-ring">
               Skicka ansökan
             </button>
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }
@@ -256,6 +297,8 @@ function V3Step1({
   const durationId = useId();
   const purposeId = useId();
   const purposeErrorId = useId();
+  const purposeHelpId = useId();
+  const [showPurposeHelp, setShowPurposeHelp] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -315,31 +358,40 @@ function V3Step1({
         </div>
       </div>
 
-      {/* ✅ GOOD: Select with proper label and error association */}
+      {/* ✅ GOOD: Select with proper label, error association, and disclosure help text */}
       <div>
         <div className="flex items-center gap-1 mb-2">
           <label htmlFor={purposeId} className="text-sm text-gray-600">
             Lånesyfte
           </label>
-          {/* ✅ GOOD: Keyboard accessible tooltip */}
+          {/* ✅ GOOD: Disclosure button instead of alert() */}
           <button
             type="button"
             className="text-gray-400 hover:text-gray-600 focus-ring rounded-full"
-            aria-label="Mer information om lånesyfte"
-            onClick={() => alert('Vi frågar om lånesyfte för att kunna ge dig bästa möjliga erbjudande.')}
+            aria-expanded={showPurposeHelp}
+            aria-controls={purposeHelpId}
+            onClick={() => setShowPurposeHelp(!showPurposeHelp)}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span className="sr-only">Mer information om lånesyfte</span>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </button>
         </div>
+        {showPurposeHelp && (
+          <p id={purposeHelpId} className="text-sm text-gray-500 mb-2">
+            Vi frågar om lånesyfte för att kunna ge dig bästa möjliga erbjudande.
+          </p>
+        )}
         <select
           id={purposeId}
           value={formData.purpose}
           onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
           className={`input-focus ${errors.purpose ? 'border-error-500' : ''}`}
-          aria-describedby={errors.purpose ? purposeErrorId : undefined}
+          aria-describedby={[errors.purpose ? purposeErrorId : null, showPurposeHelp ? purposeHelpId : null].filter(Boolean).join(' ') || undefined}
           aria-invalid={errors.purpose ? 'true' : undefined}
+          required
+          aria-required="true"
         >
           <option value="">Välj syfte...</option>
           <option value="renovation">Renovering</option>
@@ -406,6 +458,8 @@ function V3Step2({
           aria-describedby={errors.personnummer ? personnummerErrorId : undefined}
           aria-invalid={errors.personnummer ? 'true' : undefined}
           autoComplete="off"
+          required
+          aria-required="true"
         />
         {errors.personnummer && (
           <p id={personnummerErrorId} className="text-error-500 text-sm mt-1" role="alert">
@@ -427,6 +481,8 @@ function V3Step2({
           className={`input-focus ${errors.income ? 'border-error-500' : ''}`}
           aria-describedby={errors.income ? incomeErrorId : undefined}
           aria-invalid={errors.income ? 'true' : undefined}
+          required
+          aria-required="true"
         />
         {errors.income && (
           <p id={incomeErrorId} className="text-error-500 text-sm mt-1" role="alert">
@@ -435,8 +491,12 @@ function V3Step2({
         )}
       </div>
 
-      {/* ✅ GOOD: Real radio buttons with fieldset and legend */}
-      <fieldset>
+      {/* ✅ GOOD: Real radio buttons with fieldset, legend, and error association */}
+      <fieldset
+        aria-describedby={errors.employment ? employmentErrorId : undefined}
+        aria-invalid={errors.employment ? 'true' : undefined}
+        aria-required="true"
+      >
         <legend className="text-sm font-medium text-gray-700 mb-2">Anställningsform</legend>
         <div className="space-y-2">
           {[

@@ -31,17 +31,22 @@ export default function V3LoginPage() {
   const errorId = useId();
   const rememberMeId = useId();
 
+  const personnummerRef = useRef<HTMLInputElement>(null);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!personnummer) {
       setError('Ange ditt personnummer för att logga in');
+      // ✅ GOOD: Move focus to error field on validation failure
+      requestAnimationFrame(() => personnummerRef.current?.focus());
       return;
     }
 
     const cleanPnr = personnummer.replace(/\D/g, '');
     if (cleanPnr.length !== 12 && cleanPnr.length !== 10) {
       setError('Ange personnummer med 10 eller 12 siffror (ÅÅÅÅMMDD-XXXX eller ÅÅMMDD-XXXX)');
+      requestAnimationFrame(() => personnummerRef.current?.focus());
       return;
     }
 
@@ -80,6 +85,7 @@ export default function V3LoginPage() {
                 Personnummer
               </label>
               <input
+                ref={personnummerRef}
                 type="text"
                 id={personnummerId}
                 value={personnummer}
@@ -89,6 +95,8 @@ export default function V3LoginPage() {
                 aria-describedby={error ? errorId : undefined}
                 aria-invalid={error ? 'true' : undefined}
                 autoComplete="off"
+                required
+                aria-required="true"
               />
               {/* ✅ GOOD: Error associated with input and uses aria-live */}
               {error && (
@@ -199,6 +207,12 @@ function V3BankIDModal({ onClose }: { onClose: () => void }) {
 
   // ✅ GOOD: ESC key closes modal
   useEscapeKey(onClose, true);
+
+  // ✅ GOOD: Prevent background scrolling while modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
 
   // ✅ GOOD: Announce success and redirect with proper screen reader support
   useEffect(() => {
@@ -350,8 +364,14 @@ function V3TimeoutWarning({ onClose }: { onClose: () => void }) {
   // ✅ GOOD: Focus trap
   const focusTrapRef = useFocusTrap(true);
 
-  // ✅ GOOD: ESC closes (logs out in this case)
-  useEscapeKey(onClose, true);
+  // ✅ GOOD: No ESC handler for alertdialog — ESC would cause accidental logout
+  // alertdialog requires explicit user action (clicking a button)
+
+  // ✅ GOOD: Prevent background scrolling while dialog is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
 
   // Countdown timer
   useEffect(() => {
