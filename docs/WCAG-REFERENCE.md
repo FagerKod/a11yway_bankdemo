@@ -118,8 +118,8 @@ DOM-ordningen matchar visuell ordning i alla versioner.
 
 | Version | Implementation |
 |---------|----------------|
-| V1 | Tooltip endast vid hover |
-| V3 | Tooltip som knapp, stängs med Escape |
+| V1 | Tooltip endast vid hover, använder `alert()` |
+| V3 | Disclosure-mönster med `aria-expanded` som togglar inline-text |
 
 ---
 
@@ -136,7 +136,8 @@ DOM-ordningen matchar visuell ordning i alla versioner.
 | Komponent | V1-problem | V3-lösning |
 |-----------|------------|------------|
 | Knappar | `<div onclick>` | `<button>` |
-| Modaler | Ingen ESC-stängning | ESC stänger |
+| BankID-modal | Ingen ESC-stängning | ESC stänger |
+| Timeout-dialog | Ingen interaktion | Explicita knappar (ESC inaktiverad — förhindrar oavsiktlig utloggning) |
 | Flikar | Endast klick | Piltangenter |
 | Slider | Endast mus | `<input type="range">` |
 
@@ -148,7 +149,7 @@ DOM-ordningen matchar visuell ordning i alla versioner.
 
 **Demonstreras på:** Inloggning (modal)
 
-V3-modaler har fokus-trap men ESC-tangent fungerar alltid.
+V3 BankID-modal har fokus-trap och ESC-tangent. Timeout-dialog (`alertdialog`) har fokus-trap men **inte** ESC — det skulle orsaka oavsiktlig utloggning.
 
 ---
 

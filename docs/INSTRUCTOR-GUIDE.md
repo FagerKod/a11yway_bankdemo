@@ -145,8 +145,16 @@ npm run dev
 5. Vänta 2 sekunder - användaren omdirigeras utan förvarning
 6. Upprepa på `/v3/login` - visa skillnaden:
    - Fokus stannar i modalen
-   - Escape stänger modalen
+   - Escape stänger BankID-modalen
+   - Bakgrundsinnehåll kan inte scrollas
    - "Inloggning lyckades" annonseras innan omdirigering
+
+### Demo 2b: Timeout-dialog (2 min)
+1. Klicka "Visa timeout-varning" i demo-kontrollerna
+2. Visa att fokus fångas i dialogen
+3. Tryck Escape - **ingenting händer** (avsiktligt — `alertdialog` kräver explicit val)
+4. Klicka "Förläng session" — nedräkningen nollställs
+5. **Diskutera:** Varför ska Escape inte logga ut? (oavsiktlig utloggning = förlorat arbete)
 
 ### Demo 3: Skärmläsare på tabell (3 min)
 1. Starta VoiceOver (Cmd+F5)

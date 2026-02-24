@@ -140,6 +140,7 @@ useEscapeKey(onClose, isOpen);
 3. **Escape:** Stängs modalen?
 4. **Stäng:** Återgår fokus till "Logga in"-knappen?
 5. **Skärmläsare:** Annonseras "dialog"?
+6. **Scroll-lock:** Bakgrundsinnehåll ska inte kunna scrollas
 
 ---
 
@@ -152,6 +153,8 @@ useEscapeKey(onClose, isOpen);
 
 #### V3-lösning
 ```jsx
+// alertdialog — ESC stänger INTE (skulle orsaka oavsiktlig utloggning)
+// Bakgrundsscrollning blockeras
 <div
   role="alertdialog"
   aria-modal="true"
@@ -159,6 +162,7 @@ useEscapeKey(onClose, isOpen);
 >
   <h2 id="timeout-title">Sessionen håller på att gå ut</h2>
   <p aria-live="polite">Tid kvar: {timeRemaining} sekunder</p>
+  <button onClick={logout}>Logga ut nu</button>
   <button onClick={extendSession}>Förläng session</button>
 </div>
 ```
@@ -168,6 +172,8 @@ useEscapeKey(onClose, isOpen);
 2. **Skärmläsare:** Annonseras varningen automatiskt?
 3. **Nedräkning:** Annonseras nedräkningen?
 4. **Förläng:** Kan sessionen förlängas?
+5. **ESC:** Escape ska **inte** stänga dialogen (undviker oavsiktlig utloggning)
+6. **Scroll-lock:** Bakgrundsinnehåll ska inte kunna scrollas
 
 ---
 
@@ -234,11 +240,13 @@ På inloggningssidan finns en ruta "Demo-kontroller" som låter instruktören:
 | Kriterium | Nivå | Demonstreras |
 |-----------|------|--------------|
 | 1.3.1 Info och relationer | A | Etiketter, landmärken |
+| 1.4.11 Kontrast icke-text | AA | Fokusindikatorer (outline i forced-colors) |
 | 2.1.1 Tangentbord | A | Alla kontroller |
 | 2.1.2 Ingen tangentbordsfälla | A | Modal |
 | 2.2.1 Justerbar tidsgräns | A | Timeout |
-| 2.4.3 Fokusordning | A | Modal-fokus |
+| 2.4.3 Fokusordning | A | Modal-fokus, scroll-lock |
 | 2.4.7 Synligt fokus | AA | Fokusring |
-| 3.3.1 Felidentifiering | A | Validering |
-| 3.3.2 Etiketter | A | Formulärfält |
+| 3.2.2 Vid inmatning | A | Timeout-dialog (ingen ESC-utloggning) |
+| 3.3.1 Felidentifiering | A | Validering, fokus till felfält |
+| 3.3.2 Etiketter | A | Formulärfält, required-attribut |
 | 4.1.2 Namn, roll, värde | A | Alla kontroller |

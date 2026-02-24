@@ -113,18 +113,25 @@ Låneansökningssidan demonstrerar tillgänglighetsproblem relaterade till:
 ```html
 <div>
   <label for="purpose">Lånesyfte</label>
+  <!-- Disclosure pattern istället för alert() -->
   <button
     type="button"
-    aria-label="Mer information om lånesyfte"
-    onclick="showHelp()"
+    aria-expanded="false"
+    aria-controls="purpose-help"
   >
+    <span class="sr-only">Mer information om lånesyfte</span>
     ⓘ
   </button>
 </div>
+<p id="purpose-help">
+  Vi frågar om lånesyfte för att kunna ge dig bästa möjliga erbjudande.
+</p>
 <select
   id="purpose"
-  aria-describedby="purpose-error"
+  aria-describedby="purpose-error purpose-help"
   aria-invalid="true"
+  required
+  aria-required="true"
 >
   <option value="">Välj syfte...</option>
   <option value="renovation">Renovering</option>
@@ -137,7 +144,8 @@ Låneansökningssidan demonstrerar tillgänglighetsproblem relaterade till:
 #### Tester
 1. **Skärmläsare:** Annonseras "Lånesyfte" när du fokuserar fältet?
 2. **Hjälp (V1):** Kan du komma åt hjälpen utan mus?
-3. **Hjälp (V3):** Kan du klicka på ⓘ med tangentbord?
+3. **Hjälp (V3):** Kan du toggla hjälptexten med tangentbord?
+4. **Required:** Annonseras fältet som obligatoriskt?
 
 ---
 
@@ -169,7 +177,11 @@ Låneansökningssidan demonstrerar tillgänglighetsproblem relaterade till:
 
 #### V3-lösning
 ```html
-<fieldset>
+<fieldset
+  aria-describedby="employment-error"
+  aria-invalid="true"
+  aria-required="true"
+>
   <legend>Anställningsform</legend>
   <label>
     <input type="radio" name="employment" value="permanent" />
@@ -184,6 +196,9 @@ Låneansökningssidan demonstrerar tillgänglighetsproblem relaterade till:
     Egen företagare
   </label>
 </fieldset>
+<p id="employment-error" role="alert">
+  Välj din anställningsform
+</p>
 ```
 
 #### Tangentbordsnavigering (V3)
@@ -200,7 +215,7 @@ Låneansökningssidan demonstrerar tillgänglighetsproblem relaterade till:
 
 ---
 
-### 6. Fokushantering vid stegbyte
+### 6. Fokushantering vid stegbyte och valideringsfel
 
 #### V1-problem
 - Fokus stannar på "Nästa"-knappen
@@ -209,6 +224,15 @@ Låneansökningssidan demonstrerar tillgänglighetsproblem relaterade till:
 #### V3-lösning
 ```jsx
 const handleNext = () => {
+  if (!validateStep(currentStep)) {
+    // Flytta fokus till första felfältet
+    requestAnimationFrame(() => {
+      const firstError = document.querySelector('[aria-invalid="true"]');
+      firstError?.focus();
+    });
+    return;
+  }
+
   setCurrentStep(next);
 
   // Annonsera steget
@@ -221,10 +245,14 @@ const handleNext = () => {
 };
 ```
 
+Varje steg wrappas i ett `<form>`-element med `onSubmit` så att Enter-tangent i textfält fungerar som förväntat.
+
 #### Tester
 1. **V1:** Klicka "Nästa" - var hamnar fokus?
-2. **V3:** Klicka "Nästa" - hamnar fokus på nytt steg?
-3. **Skärmläsare:** Annonseras det nya steget?
+2. **V3:** Klicka "Nästa" med valideringsfel - hamnar fokus på felfältet?
+3. **V3:** Klicka "Nästa" utan fel - hamnar fokus på nytt steg?
+4. **Skärmläsare:** Annonseras det nya steget?
+5. **Enter:** Tryck Enter i textfält - submitas formuläret?
 
 ---
 
@@ -268,10 +296,12 @@ const handleNext = () => {
 
 | Kriterium | Nivå | Demonstreras |
 |-----------|------|--------------|
-| 1.3.1 Info och relationer | A | Stegindikator, fieldset |
-| 2.1.1 Tangentbord | A | Slider, radioknappar |
-| 2.4.3 Fokusordning | A | Stegbyte |
-| 3.3.1 Felidentifiering | A | Validering |
+| 1.3.1 Info och relationer | A | Stegindikator, fieldset, aria-describedby |
+| 2.1.1 Tangentbord | A | Slider, radioknappar, disclosure-hjälp |
+| 2.4.3 Fokusordning | A | Stegbyte, fokus till felfält |
+| 3.3.1 Felidentifiering | A | Validering, fokus till felfält |
+| 3.3.2 Etiketter | A | Required-attribut på obligatoriska fält |
 | 3.3.3 Felförslag | AA | Specifika felmeddelanden |
 | 4.1.2 Namn, roll, värde | A | Slider, radioknappar |
+| 4.1.3 Statusmeddelanden | AA | Bekräftelse via aria-live (ej alert) |
 | 4.1.3 Statusmeddelanden | AA | Kalkylator |

@@ -173,12 +173,14 @@ Kontoöversikten demonstrerar tillgänglighetsproblem relaterade till:
 
 #### V3-lösning
 ```html
-<!-- Diagram med aria-label -->
+<!-- Diagram med aria-label. Bars inuti role="img" är presentationella
+     (inga role="progressbar" — det ignoreras inuti role="img").
+     Tillgänglighet ges via aria-label + expanderbar datatabell. -->
 <div
   role="img"
   aria-label="Utgifter denna månad: Matvaror 4500 kr (35%), Transport 2100 kr (16%), Nöje 1800 kr (14%), Shopping 3200 kr (25%), Övrigt 1400 kr (11%). Totalt: 13000 kr"
 >
-  <!-- Visuellt diagram -->
+  <!-- Visuella bars (presentationella) -->
 </div>
 
 <!-- Expanderbar datatabell -->
@@ -230,6 +232,34 @@ Kontoöversikten demonstrerar tillgänglighetsproblem relaterade till:
 
 ---
 
+### 6. Dokument-flik
+
+#### V1-problem
+- Dokumentlänkar är inte interaktiva element
+- Nedladdningsknapp saknar tillgängligt namn
+
+#### V3-lösning
+```html
+<!-- Länk och knapp är separata interaktiva element (aldrig nästlade) -->
+<li class="flex items-center justify-between">
+  <a href="/documents/1" class="flex items-center gap-3 flex-1">
+    <svg aria-hidden="true"><!-- PDF-ikon --></svg>
+    <span>Kontoutdrag januari 2024</span>
+  </a>
+  <button aria-label="Ladda ner Kontoutdrag januari 2024">
+    <svg aria-hidden="true"><!-- Nedladdnings-ikon --></svg>
+  </button>
+</li>
+```
+
+**Viktigt:** Länk och knapp får aldrig nästlas inuti varandra — det ger ogiltig HTML och skärmläsare kan inte avgöra vilken kontroll som aktiveras.
+
+#### Tester
+1. **Tab:** Kan du tabba separat till dokumentlänk och nedladdningsknapp?
+2. **Skärmläsare:** Annonseras länk och knapp som separata kontroller?
+
+---
+
 ## WCAG-kriterier demonstrerade
 
 | Kriterium | Nivå | Demonstreras |
@@ -238,4 +268,5 @@ Kontoöversikten demonstrerar tillgänglighetsproblem relaterade till:
 | 1.3.1 Info och relationer | A | Tabell, flikar |
 | 1.4.1 Användning av färg | A | Inkomst/utgift |
 | 2.1.1 Tangentbord | A | Flikar, knappar |
+| 4.1.1 Parsning | A | Inga nästlade interaktiva element |
 | 4.1.2 Namn, roll, värde | A | Flikar, ikonknappar |

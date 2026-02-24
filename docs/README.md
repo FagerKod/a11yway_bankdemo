@@ -56,6 +56,7 @@ Webbplatsen har två typer av layouts:
 - [Felkatalog](./ERRORS.md) - Alla tillgänglighetsproblem per sida
 - [WCAG-referens](./WCAG-REFERENCE.md) - Relevanta WCAG-kriterier
 - [Sidor](./pages/) - Detaljerad dokumentation per sida
+- [Changelog](./CHANGELOG.md) - Ändringslogg
 
 ## Målgrupp
 

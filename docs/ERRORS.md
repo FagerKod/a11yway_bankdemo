@@ -124,8 +124,12 @@ const focusTrapRef = useFocusTrap(isOpen);
 
 **V3-lösning:**
 ```jsx
-<div role="alertdialog" aria-live="assertive">
-  <p>Tid kvar: {timeRemaining} sekunder</p>
+// alertdialog — ESC stänger INTE (skulle orsaka oavsiktlig utloggning)
+// Fokus-trap håller fokus inuti dialogen
+// Bakgrundsscrollning blockeras med overflow: hidden
+<div role="alertdialog" aria-modal="true">
+  <p aria-live="polite">Tid kvar: {timeRemaining} sekunder</p>
+  <button onClick={logout}>Logga ut nu</button>
   <button onClick={extendSession}>Förläng session</button>
 </div>
 ```
@@ -244,14 +248,14 @@ const focusTrapRef = useFocusTrap(isOpen);
 * { outline: none; }
 ```
 
-**WCAG:** 2.4.7 Synligt fokus
+**WCAG:** 2.4.7 Synligt fokus, 1.4.11 Kontrast icke-text
 
 **V3-lösning:**
 ```css
-/* V3 - RÄTT */
-:focus-visible {
-  outline: 2px solid #0066CC;
-  outline-offset: 2px;
+/* V3 - RÄTT — Använder outline (inte box-shadow/ring) för att
+   säkerställa synlighet i Windows High Contrast / forced-colors mode */
+.focus-ring {
+  @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500;
 }
 ```
 
@@ -550,14 +554,81 @@ const handleNext = () => {
 
 **V3-lösning:**
 ```html
-<fieldset>
+<fieldset
+  aria-describedby="employment-error"
+  aria-invalid="true"
+  aria-required="true"
+>
   <legend>Anställningsform</legend>
   <label>
     <input type="radio" name="employment" value="permanent" />
     Tillsvidareanställning
   </label>
 </fieldset>
+<p id="employment-error" role="alert">
+  Välj din anställningsform
+</p>
 ```
+
+---
+
+#### 6. Formulärfält saknar `required`
+**Problem:** Obligatoriska fält (personnummer, inkomst, lånesyfte) markeras inte som `required`.
+
+**WCAG:** 3.3.2 Etiketter eller instruktioner
+
+**V3-lösning:**
+```html
+<input id="personnummer" required aria-required="true" />
+<select id="purpose" required aria-required="true">...</select>
+```
+
+---
+
+#### 7. Hjälp-tooltip använder `alert()`
+**Problem:** Hjälpknappen vid lånesyfte anropar `alert()` som blockerar UI.
+
+**WCAG:** 2.1.1 Tangentbord, 4.1.3 Statusmeddelanden
+
+**V3-lösning:**
+```html
+<!-- Disclosure pattern istället för alert() -->
+<button aria-expanded="false" aria-controls="purpose-help">
+  <span class="sr-only">Mer information om lånesyfte</span>
+  ⓘ
+</button>
+<p id="purpose-help">
+  Vi frågar om lånesyfte för att kunna ge dig bästa möjliga erbjudande.
+</p>
+```
+
+---
+
+#### 8. Fokus flyttas inte vid valideringsfel
+**Problem:** När validering misslyckas stannar fokus på knappen. Skärmläsaranvändare vet inte att fel uppstått.
+
+**WCAG:** 3.3.1 Felidentifiering
+
+**V3-lösning:**
+```jsx
+const handleNext = () => {
+  if (!validateStep(currentStep)) {
+    // Flytta fokus till första felfältet
+    requestAnimationFrame(() => {
+      const firstError = document.querySelector('[aria-invalid="true"]');
+      firstError?.focus();
+    });
+    return;
+  }
+};
+```
+
+---
+
+#### 9. Formuläret saknar `<form>`-element
+**Problem:** Stegformuläret har fält och knappar men inget `<form>`. Enter-tangent i textfält submitar inte.
+
+**V3-lösning:** Varje stegs formulärfält wrappas i `<form>` med `onSubmit`.
 
 ---
 

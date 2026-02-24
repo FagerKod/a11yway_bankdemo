@@ -52,6 +52,13 @@ Denna guide beskriver hur du testar tillgänglighet på BankDemo-webbplatsen.
 1. Öppna BankID-modalen på inloggningssidan
 2. Försök tabba - fokus ska stanna inuti modalen
 3. Tryck `Escape` - modalen ska stängas
+4. Kontrollera att bakgrundsinnehåll inte kan scrollas
+
+**Timeout-dialog (alertdialog):**
+1. Trigga timeout-varningen via demo-knappen
+2. Fokus ska stanna inuti dialogen
+3. `Escape` ska **inte** stänga dialogen (förhindrar oavsiktlig utloggning)
+4. Användaren måste välja "Logga ut" eller "Förläng session"
 
 **V1-problem:** Fokus "flyr" modalen, Escape fungerar inte.
 
@@ -186,10 +193,13 @@ Denna guide beskriver hur du testar tillgänglighet på BankDemo-webbplatsen.
 | Formulärfält har synliga etiketter | ❌ | ✅ | ✅ |
 | Knappar är `<button>` element | ❌ | ✅ | ✅ |
 | BankID-modal fångar fokus | ❌ | ❌ | ✅ |
-| Escape stänger modal | ❌ | ✅ | ✅ |
+| Escape stänger BankID-modal | ❌ | ✅ | ✅ |
 | Timeout-varning annonseras | ❌ | ❌ | ✅ |
+| Timeout-dialog kräver explicit knappval | ❌ | ❌ | ✅ |
 | Sessionen kan förlängas | ❌ | ❌ | ✅ |
+| Modaler blockerar bakgrundsscrollning | ❌ | ❌ | ✅ |
 | Felmeddelanden kopplade till fält | ❌ | ❌ | ✅ |
+| Fokus flyttas till felfält vid validering | ❌ | ❌ | ✅ |
 | Skip-länk finns | ❌ | ❌ | ✅ |
 
 ### Kontoöversikt (`/account`)
@@ -212,9 +222,14 @@ Denna guide beskriver hur du testar tillgänglighet på BankDemo-webbplatsen.
 | Slider är tangentbordsanvändbar | ❌ | ✅ | ✅ |
 | Slider har aria-valuetext | ❌ | ❌ | ✅ |
 | Fokus flyttas mellan steg | ❌ | ❌ | ✅ |
+| Fokus flyttas till felfält vid validering | ❌ | ❌ | ✅ |
 | Felmeddelanden är specifika | ❌ | ❌ | ✅ |
 | Radioknappar är riktiga `<input>` | ❌ | ✅ | ✅ |
+| Fieldset har aria-describedby vid fel | ❌ | ❌ | ✅ |
 | Fieldset/legend för radioknappar | ❌ | ❌ | ✅ |
+| Obligatoriska fält markerade med required | ❌ | ❌ | ✅ |
+| Hjälptext via disclosure (ej alert) | ❌ | ❌ | ✅ |
+| Formulärsteg wrappade i `<form>` | ❌ | ❌ | ✅ |
 
 ### Inställningar (`/settings`)
 
